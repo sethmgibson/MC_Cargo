@@ -1,304 +1,315 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="google-site-verification" content="J8QoqilrV-83Eih_3lTKs6xZuPqJjtFdiEckX-CyMDk" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-	<!-- seo/social -->
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Roboto:wght@300;400;500;700&family=Lora:wght@400;500;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<script>
-window.MOVE_DATA = window.MOVE_DATA || {adobeDTM: {}};
-window.MOVEAnalytics=window.MOVEAnalytics||{q:[],init:function(){this.q.push({t:"init",a:arguments})},trackPage:function(){this.q.push({t:"trackPage",a:arguments})},trackEvent:function(){this.q.push({t:"trackEvent",a:arguments})},identify:function(){this.q.push({t:"identify",a:arguments})}};
-</script>
+  <!-- jQuery / jQuery UI (for .autocomplete) -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 
-<script>
-MOVEAnalytics.trackPage("research:landing", {
-	siteSection: "research",
-	pageType: "landing",
-	pageId: "landing",
-	rdcTrackingEnabled: "y"
-});
-</script>
-	<link media="all" href="https://rdceconomics.wpengine.com/wp-content/cache/autoptimize/css/autoptimize_6a05469d3600eaca90bef62a24c1a102.css" rel="stylesheet">
-	<link rel="canonical" href="https://www.realtor.com/research/" />
-	<meta property="og:locale" content="en_US" />
-	<meta name="google-site-verification" content="t6bp6tSEe5im97milAuQUH8Uu4cqHtjUj7oYFFjJZBs" />
+  <!-- Owl Carousel (for horizontal scrolling in the ticker) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/owl.carousel@2.3.4/dist/assets/owl.carousel.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/owl.carousel@2.3.4/dist/assets/owl.theme.default.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/owl.carousel@2.3.4/dist/owl.carousel.min.js"></script>
 
-<script type="text/javascript" id="jquery-core-js-extra">
-/* <![CDATA[ */
-var SDT_DATA = {"ajaxurl":"https:\/\/rdceconomics.wpengine.com\/wp-admin\/admin-ajax.php","siteUrl":"https:\/\/rdceconomics.wpengine.com\/","pluginsUrl":"https:\/\/rdceconomics.wpengine.com\/wp-content\/plugins","isAdmin":""};
-/* ]]> */
-</script>
-<script type="text/javascript" src="https://rdceconomics.wpengine.com/wp-includes/js/jquery/jquery.min.js?ver=3.7.1" id="jquery-core-js"></script>
+  <!-- Font Awesome (for the magnifying-glass icon) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-<link rel='shortlink' href='https://www.realtor.com/research/' />
-<meta name="tec-api-version" content="v1"><meta name="tec-api-origin" content="https://www.realtor.com/research"><link rel="alternate" href="https://www.realtor.com/research/wp-json/tribe/events/v1/" />
+  <title>Market Ticker Only</title>
+
+  <style>
+    /* Minimal styling for container/ticker; adjust as needed */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    #ticker {
+      background: #f7f7f7;
+      padding: 10px 0;
+    }
+    #ticker .container {
+      width: 90%;
+      margin: 0 auto;
+    }
+    .ticker {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      position: relative;
+    }
+    .ticker-col {
+      margin-right: 20px;
+    }
+    .ticker .current-location {
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+      display: inline-block;
+      margin-right: 10px;
+    }
+    .ticker .location .icon {
+      margin-right: 5px;
+    }
+    .form-bar {
+      display: inline-block;
+    }
+    .form-bar .bar {
+      display: flex;
+      align-items: center;
+      margin-top: 5px;
+    }
+    .text-box {
+      height: 30px;
+      padding: 5px;
+      font-size: 14px;
+    }
+    .button.plain {
+      background: none;
+      border: none;
+      padding: 0 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .stats .item {
+      display: flex;
+      align-items: baseline;
+      margin-right: 40px;
+    }
+    .stats .label {
+      font-weight: bold;
+      margin-right: 5px;
+    }
+    .stats .number {
+      font-size: 1.2em;
+      margin-right: 5px;
+    }
+    .change.up {
+      color: green;
+    }
+    .change.down {
+      color: red;
+    }
+    .loading .loading-icon {
+      display: none; /* Hide if you don't need a spinner */
+    }
+  </style>
 </head>
 
 <body>
+  <section id="ticker">
+    <div class="container">
+      <div class="ticker">
+        <!-- Location / Search -->
+        <div class="location ticker-col">
+          <a class="current-location" href="#" title="Choose Market">
+            <img class="icon" src="https://rdceconomics.wpengine.com/wp-content/themes/rdc-research/images/icon-send.png" width="16" height="16" alt="">
+            <span class="metro">Loading market data...</span>
+          </a>
+          <form class="form-bar ticker-search analytics-track-search">
+            <div class="bar">
+              <input id="metro" class="text-box" type="text" name="metro" placeholder="Market Summary Location">
+              <button class="button plain" title="Search Markets">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </form>
+        </div>
 
-<main role="main">
-	<!-- #ticker -->
-	<section id="ticker">
-		<div class="container">
-			<div class="ticker">
-				<div class="location ticker-col">
-					<a class="current-location" href="#" title="Choose Market">
-						<noscript><img class="icon" src="https://rdceconomics.wpengine.com/wp-content/themes/rdc-research/images/icon-send.png" width="16" height="16" alt=""></noscript><img class="lazyload icon" src='data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2016%2016%22%3E%3C/svg%3E' data-src="https://rdceconomics.wpengine.com/wp-content/themes/rdc-research/images/icon-send.png" width="16" height="16" alt="">
-						<span class="metro">Loading market data...</span>
-					</a>
-					<form class="form-bar ticker-search analytics-track-search" data-link-name="research:landing:searchBox:market_search">
-						<div class="bar">
-							<input id="metro" class="text-box" type="text" name="metro" placeholder="Market Summary Location">
-							<button class="button plain" title="Search Markets"><i class="fas fa-search"></i></button>
-						</div>
-					</form>
-				</div>
-				<div class="stats ticker-col owl-carousel">
-					<div class="median-list-prices item">
-						<span class="label">Median list prices:</span>
-						<span class="number">$<span class="value">449K</span></span>
-						<span class="change down"><span class="value">17%</span> YoY</span>
-					</div>
-					<div class="days-on-market item">
-						<span class="label">Days on Market:</span>
-						<span class="number">34</span>
-						<span class="change up"><span class="value">4%</span> YoY</span>
-					</div>
-					<div class="active-listings item">
-						<span class="label">Active Listings:</span>
-						<span class="number">747,526</span>
-						<span class="change up"><span class="value">32%</span> YoY</span>
-					</div>
-				</div>
-								<div class="loading">
-					<div class="loading-icon">
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-	<!-- / #ticker -->
-</main>
+        <!-- Stats (Carousel) -->
+        <div class="stats ticker-col owl-carousel">
+          <div class="median-list-prices item">
+            <span class="label">Median list prices:</span>
+            <span class="number">$<span class="value">449K</span></span>
+            <span class="change down"><span class="value">17%</span> YoY</span>
+          </div>
+          <div class="days-on-market item">
+            <span class="label">Days on Market:</span>
+            <span class="number">34</span>
+            <span class="change up"><span class="value">4%</span> YoY</span>
+          </div>
+          <div class="active-listings item">
+            <span class="label">Active Listings:</span>
+            <span class="number">747,526</span>
+            <span class="change up"><span class="value">32%</span> YoY</span>
+          </div>
+        </div>
 
-		<script>
-		( function ( body ) {
-			'use strict';
-			body.className = body.className.replace( /\btribe-no-js\b/, 'tribe-js' );
-		} )( document.body );
-		</script>
-		<script async data-noptimize="1" src='https://rdceconomics.wpengine.com/wp-content/plugins/autoptimize/classes/external/js/lazysizes.min.js?ao_version=3.1.10'></script>
-<script type="text/javascript" id="dtgs_nonce_frontend-js-after">
-/* <![CDATA[ */
-var DTGS_NONCE_FRONTEND = "e0d43c8a40"
-/* ]]> */
-</script>
-<script type="text/javascript" id="ppress-frontend-script-js-extra">
-/* <![CDATA[ */
-var pp_ajax_form = {"ajaxurl":"https:\/\/rdceconomics.wpengine.com\/wp-admin\/admin-ajax.php","confirm_delete":"Are you sure?","deleting_text":"Deleting...","deleting_error":"An error occurred. Please try again.","nonce":"e2a959a5e2","disable_ajax_form":"false","is_checkout":"0","is_checkout_tax_enabled":"0"};
-/* ]]> */
-</script>
+        <!-- Loading indicator (hidden by default) -->
+        <div class="loading">
+          <div class="loading-icon"></div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<script defer src="//geoip-js.com/js/apis/geoip2/v2.1/geoip2.js"></script>
-<script>
+  <!-- GeoIP script (for auto-detecting user location) -->
+  <script defer src="//geoip-js.com/js/apis/geoip2/v2.1/geoip2.js"></script>
 
-let zip_array = [];
+  <script>
+    // Holds data loaded from the backend
+    let zip_array = [];
 
-function display_stats(check_str) {
-	let $ = jQuery;
-	if (!($('.ticker').hasClass('data-loaded'))) {
-		return;
-	}
+    function display_stats(check_str) {
+      let $ = jQuery;
+      if (!$('.ticker').hasClass('data-loaded')) return;
 
-	// Check for full location match in the data.
-	let check = zip_array.find(c => c.label == check_str);
-	if (!check) {
-		// Failing that, check for city, state match.
-		check_str = check_str.substring(0, check_str.length - 6);
-		check = zip_array.find(c => c.label.indexOf(check_str) !== -1);
-		if (check) {
-			$('#metro').val(check.label);
-			$('.ticker .current-location .metro').text(check.label);
-		}
-		else {
-			// Use default location if no match could be found.
-			check = zip_array.find(c => c.label == 'New York, NY 10001');
-			if (check) {
-				$('#metro').val(check.label);
-				$('.ticker .current-location .metro').text(check.label);
-			}
-		}
-	}
+      let check = zip_array.find(c => c.label === check_str);
+      if (!check) {
+        // Attempt partial city, state match
+        check_str = check_str.replace(/\s*\d{5}$/,''); // remove zip if present
+        check = zip_array.find(c => c.label.indexOf(check_str.trim()) !== -1);
 
-	let map = {
-		'median-list-prices' : 0,
-		'median-list-prices-yoy' : 1,
-		'days-on-market' : 4,
-		'days-on-market-yoy' : 5,
-		'active-listings' : 2,
-		'active-listings-yoy' : 3
-	};
-	if (check && (typeof check['value'] !== 'undefined')) { 
-		const results = check['value'].split('|');
-
-		$('.median-list-prices .number .value').html(results[map['median-list-prices']]);
-		$('.days-on-market .number').html(results[map['days-on-market']]);
-		$('.active-listings .number').html(results[map['active-listings']]);
-
-		$('.median-list-prices .change .value').html(Math.abs(results[map['median-list-prices-yoy']]) + '%');
-		$('.days-on-market .change .value').html(Math.abs(results[map['days-on-market-yoy']]) + '%');
-		$('.active-listings .change .value').html(Math.abs(results[map['active-listings-yoy']]) + '%');
-
-		$('.ticker .median-list-prices .change').removeClass('up down').addClass((results[map['median-list-prices-yoy']] < 0 ) ? 'down' : 'up');
-		$('.ticker .days-on-market .change').removeClass('up down').addClass((results[map['days-on-market-yoy']] < 0 ) ? 'down' : 'up');
-		$('.ticker .active-listings .change').removeClass('up down').addClass((results[map['active-listings-yoy']] < 0 ) ? 'down' : 'up');
-	}
-	$('.ticker .stats.owl-carousel').trigger('refresh.owl.carousel');
-}
-
-jQuery(document).ready(function($){
-	//Geo IP
-    let city;
-    let state;
-    let zipcode;
-    let currentSearch = {};
-    currentSearch.settings = {};
-
-    let successIp = function(data) {
-        let settings = {
-            lat: data.location.latitude,
-            lon: data.location.longitude,
-            city: data.city.names.en,
-            state: data.subdivisions[0].iso_code,
-            country: data.country.iso_code,
-            zipcode: data.postal.code
-        };
-        
-        city = data.city.names.en;
-        state = data.subdivisions[0].iso_code;
-        zipcode = data.postal.code;
-		
-        if(!city)
-        {
-            city = 'New York';
-            state = 'NY';
-            zipcode = '10001';
+        // Otherwise default to Washington, DC
+        if (!check) {
+          check = zip_array.find(c => c.label === 'Washington, DC 20001');
+          if (check) {
+            $('#metro').val(check.label);
+            $('.ticker .current-location .metro').text(check.label);
+          }
         }
-        currentSearch.settings.city = city;
-        currentSearch.settings.state = state;
-        currentSearch.settings.zipcode = zipcode;
-        currentSearch.settings.country = data.country.iso_code;
-        let check_str = city+', '+state+' '+zipcode;
+      }
+
+      let map = {
+        'median-list-prices': 0,
+        'median-list-prices-yoy': 1,
+        'active-listings': 2,
+        'active-listings-yoy': 3,
+        'days-on-market': 4,
+        'days-on-market-yoy': 5
+      };
+
+      if (check && typeof check['value'] !== 'undefined') {
+        const results = check['value'].split('|');
+
+        $('.median-list-prices .number .value').html(results[map['median-list-prices']]);
+        $('.days-on-market .number').html(results[map['days-on-market']]);
+        $('.active-listings .number').html(results[map['active-listings']]);
+
+        $('.median-list-prices .change .value').html(Math.abs(results[map['median-list-prices-yoy']]) + '%');
+        $('.days-on-market .change .value').html(Math.abs(results[map['days-on-market-yoy']]) + '%');
+        $('.active-listings .change .value').html(Math.abs(results[map['active-listings-yoy']]) + '%');
+
+        $('.ticker .median-list-prices .change')
+          .removeClass('up down')
+          .addClass((results[map['median-list-prices-yoy']] < 0) ? 'down' : 'up');
+        $('.ticker .days-on-market .change')
+          .removeClass('up down')
+          .addClass((results[map['days-on-market-yoy']] < 0) ? 'down' : 'up');
+        $('.ticker .active-listings .change')
+          .removeClass('up down')
+          .addClass((results[map['active-listings-yoy']] < 0) ? 'down' : 'up');
+      }
+
+      // Refresh the Owl Carousel in case any layout changed
+      $('.ticker .stats.owl-carousel').trigger('refresh.owl.carousel');
+    }
+
+    jQuery(document).ready(function($) {
+      let city, state, zipcode;
+      let save_var = '';
+
+      // Attempt GeoIP
+      function successIp(data) {
+        city = data.city.names.en || 'Washington';
+        state = data.subdivisions[0].iso_code || 'DC';
+        zipcode = data.postal.code || '20001';
+
+        let check_str = city + ', ' + state + ' ' + zipcode;
         $('#metro').val(check_str);
         $('.ticker .current-location .metro').text(check_str);
+
         display_stats(check_str);
-    };
-    let onErrorIp = function(data){
-        currentSearch.settings.city = 'New York';
-        currentSearch.settings.state = 'NY';
-        currentSearch.settings.zipcode = '10001';
-        let check_str = city+', '+state+' '+zipcode;
+      }
+
+      function onErrorIp() {
+        city = 'Washington';
+        state = 'DC';
+        zipcode = '20001';
+        let check_str = city + ', ' + state + ' ' + zipcode;
         $('#metro').val(check_str);
         $('.ticker .current-location .metro').text(check_str);
+
         display_stats(check_str);
-    };
-	
-	//Call GEo IP
-	if (typeof geoip2 !== 'undefined')
-	{ 
-	 	geoip2.city(successIp, onErrorIp);
-	}
-	else
-	{
-		let city = 'New York';
-		let state = 'NY';
-		let zipocde = '10001';
-		let check_str = city+', '+state+' '+zipcode;
-		$('#metro').val(check_str);
-		$('.ticker .current-location .metro').text(check_str);
-		display_stats(check_str);
-	}
+      }
 
+      if (typeof geoip2 !== 'undefined') {
+        geoip2.city(successIp, onErrorIp);
+      } else {
+        onErrorIp();
+      }
 
-	// Load the stats data via ajax.
-	$.ajax({
+      // Fetch ticker data (proxy used here for demonstration; adjust or remove as needed)
+      $.ajax({
         url: 'https://cors-anywhere.herokuapp.com/https://www.realtor.com/research',
-        data: {get_ticker_ajax: '1'},
+        data: { get_ticker_ajax: '1' },
         dataType: 'json',
         success: function(data) {
-            zip_array = data;
-            init_stats();
+          zip_array = data;
+          $('.ticker').addClass('data-loaded');
+          display_stats($('#metro').val());
+          initAutoComplete();
+        },
+        error: function() {
+          // If the data call fails, you could fallback to a default or handle error here
+          $('.ticker').addClass('data-loaded');
+          display_stats($('#metro').val());
+          initAutoComplete();
         }
+      });
+
+      // Initialize jQuery UI autocomplete after data loads
+      function initAutoComplete() {
+        $('#metro').autocomplete({
+          minLength: 2,
+          source: zip_array,
+          focus: function(event, ui) {
+            $(this).val(ui.item.label);
+            save_var = ui.item.label;
+            return false;
+          },
+          select: function(event, ui) {
+            event.preventDefault();
+            $('#metro').val(ui.item.label);
+            $('.ticker .current-location .metro').text(ui.item.label);
+            display_stats(ui.item.label);
+          }
+        });
+      }
+
+      // Manage input focus/blur
+      $('#metro').on('blur', function() {
+        if (!$(this).val()) $(this).val(save_var);
+      });
+      $('#metro').on('focus', function() {
+        save_var = $(this).val();
+        $(this).val('');
+      });
+
+      // Initialize Owl Carousel
+      $('.stats.owl-carousel').owlCarousel({
+        items: 3,
+        loop: false,
+        margin: 20,
+        nav: false,
+        dots: false,
+        responsive:{
+          0:{ items:1 },
+          600:{ items:2 },
+          1000:{ items:3 }
+        }
+      });
+
+      // Simple search tracking stub (no actual analytics here)
+      $('form.analytics-track-search').on('submit', function(e) {
+        e.preventDefault();
+        let query = $(this).find('input[type=text]').val();
+        // Normally you'd call your tracking or handle the search here
+        console.log('Searching for:', query);
+      });
     });
-
-	// Init stats data dependent stuff after it loads.
-	function init_stats() {
-
-		$('.ticker').addClass('data-loaded');
-		display_stats($('#metro').val());
-
-		$('#metro').autocomplete({
-			minLength: 2,
-			source: zip_array,
-			focus: function( event, ui ) {
-				$(this).val(ui.item.label);
-				save_var = ui.item.label; //Store selected value and display on blur
-				return false;
-	    	},
-			select: function( event, ui ) {
-				event.preventDefault();
-				$('#metro').val(ui.item.label);
-				$('.ticker .current-location .metro').text(ui.item.label);
-				display_stats(ui.item.label);
-				$('#metro').closest('form').find('.button').click();
-			}
-		});
-	}
-
-
-	//Onblur
-	$('#metro').on("blur", function() {
-		if ($(this).val() == "") {
-			//alert(save_var);
-		  $(this).val(save_var);
-		}
-    });
-	//Focusout
-	$("#metro").focusout(function(){
-    	$('#metro').val(save_var);
-	});
-	//Onfocus
-	$('#metro').on("focus", function() {
-		save_var = $(this).val();
-		//alert(save_var);
-	  $(this).val('');
-	});
-});
-</script>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-	
-
-<script async src="https://assets.adobedtm.com/6809d1ba6f0c/c4bef609fe0d/launch-b1aeef4798eb.min.js"></script>
-
-<script type="text/javascript">
-jQuery(document).ready(function($) {
-  $('form.analytics-track-search').each(function(i) {
-    $(this).on('submit', function(e) {
-      e.preventDefault(); // Prevent page reload
-      var form = $(this);
-      var link = form.data('linkName');
-      var query = form.find('input[type=text]').val();
-      // Existing tracking code
-    });
-  });
-});
-</script>
-
-
-
-<script defer src="https://rdceconomics.wpengine.com/wp-content/cache/autoptimize/js/autoptimize_5e6fee30149484b23ae1e135768ea4d4.js"></script></body>
+  </script>
+</body>
 </html>
+
