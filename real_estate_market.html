@@ -162,66 +162,39 @@ jQuery(document).ready(function($){
     let currentSearch = {};
     currentSearch.settings = {};
 
-    let successIp = function(data) {
-        let settings = {
-            lat: data.location.latitude,
-            lon: data.location.longitude,
-            city: data.city.names.en,
-            state: data.subdivisions[0].iso_code,
-            country: data.country.iso_code,
-			zipcode: data.postal.code
-        };
-        
-        city = data.city.names.en;
-        state = data.subdivisions[0].iso_code;
-		zipcode = data.postal.code;
-		
-        if(!city)
-        {
-            city = 'Washington';
-            state = 'DC';
-			zipcode = '20001';
-        }
-        currentSearch.settings.city = city;
-        currentSearch.settings.state = state;
-		currentSearch.settings.zipcode = zipcode;
-        currentSearch.settings.country = data.country.iso_code;
-		let check_str = city+', '+state+' '+zipcode;
-		$('#metro').val(check_str);
-		$('.ticker .current-location .metro').text(check_str);
-		display_stats(check_str);
-	
-    };
-    let onErrorIp = function(data){
-		currentSearch.settings.city = 'Washington';
-        currentSearch.settings.state = 'DC';
-		currentSearch.settings.zipcode = '20001';
-		let check_str = city+', '+state+' '+zipcode;
-		$('#metro').val(check_str);
-		$('.ticker .current-location .metro').text(check_str);
-		display_stats(check_str);
-    };
-	
-	//Call GEo IP
-	if (typeof geoip2 !== 'undefined')
-	{ 
-	 	geoip2.city(successIp, onErrorIp);
-	}
-	else
-	{
-		let city = 'Washington';
-		let state = 'DC';
-		let zipocde = '20001';
-		let check_str = city+', '+state+' '+zipcode;
-		$('#metro').val(check_str);
-		$('.ticker .current-location .metro').text(check_str);
-		display_stats(check_str);
-	}
+    // Use a Free GeoIP API
+    fetch("https://ipapi.co/json/")
+        .then(response => response.json())
+        .then(data => {
+            city = data.city || "Washington";
+            state = data.region_code || "DC";
+            zipcode = data.postal || "20001";
 
+            currentSearch.settings.city = city;
+            currentSearch.settings.state = state;
+            currentSearch.settings.zipcode = zipcode;
+            currentSearch.settings.country = data.country_code;
+
+            let check_str = `${city}, ${state} ${zipcode}`;
+            $('#metro').val(check_str);
+            $('.ticker .current-location .metro').text(check_str);
+            display_stats(check_str);
+        })
+        .catch(error => {
+            console.error("GeoIP Fetch Error:", error);
+            // Default Fallback
+            currentSearch.settings.city = 'Washington';
+            currentSearch.settings.state = 'DC';
+            currentSearch.settings.zipcode = '20001';
+            let check_str = 'Washington, DC 20001';
+            $('#metro').val(check_str);
+            $('.ticker .current-location .metro').text(check_str);
+            display_stats(check_str);
+        });
 
 	// Load the stats data via ajax.
 	$.ajax({
-        url: 'https://www.realtor.com/research',
+        url: 'https://cors-anywhere.herokuapp.com/https://www.realtor.com/research',
         data: {get_ticker_ajax: '1'},
         dataType: 'json',
         success: function(data) {
