@@ -195,15 +195,18 @@ jQuery(document).ready(function($){
         });
 
 	// Load the stats data via ajax.
+		// Load the stats data via ajax.
 	$.ajax({
-        url: 'https://www.realtor.com/research',
-        data: {get_ticker_ajax: '1'},
-        dataType: 'json',
-        success: function(data) {
-            zip_array = data;
-            init_stats();
-        }
-    });
+	        url: 'https://soft-glade-7f9e.seth-b59.workers.dev/',
+	        dataType: 'json',
+	        success: function(data) {
+	            zip_array = data;
+	            init_stats();
+	        },
+	        error: function(jqXHR, textStatus, errorThrown) {
+	            console.error("Error fetching data:", textStatus, errorThrown);
+	        }
+	    });
 
 	// Init stats data dependent stuff after it loads.
 	function init_stats() {
